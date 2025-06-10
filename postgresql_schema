@@ -1,0 +1,51 @@
+-- Create current_weather table
+CREATE TABLE current_weather (
+    id SERIAL PRIMARY KEY,
+    source TEXT NOT NULL,
+    farm_id TEXT NOT NULL,
+    location GEOGRAPHY(Point, 4326) NOT NULL,
+    timestamp TIMESTAMPTZ NOT NULL,
+    temperature_c REAL,
+    humidity_percent REAL,
+    wind_speed_mps REAL,
+    wind_direction_deg REAL,
+    rainfall_mm REAL,
+    solar_radiation_wm2 REAL
+);
+
+-- Create forecast_weather table
+CREATE TABLE forecast_weather (
+    id SERIAL PRIMARY KEY,
+    source TEXT NOT NULL,
+    farm_id TEXT NOT NULL,
+    forecast_for TIMESTAMPTZ NOT NULL,
+    fetched_at TIMESTAMPTZ NOT NULL,
+    location GEOGRAPHY(Point, 4326) NOT NULL,
+    temperature_c REAL,
+    humidity_percent REAL,
+    wind_speed_mps REAL,
+    wind_direction_deg REAL,
+    rainfall_mm REAL,
+    chance_of_rain_percent REAL
+);
+
+-- Create indexes for current_weather
+CREATE INDEX idx_current_weather_farm ON current_weather (farm_id);
+CREATE INDEX idx_current_weather_time ON current_weather (timestamp);
+CREATE INDEX idx_current_weather_location ON current_weather USING GIST (location);
+CREATE INDEX idx_current_source_time ON current_weather (source, timestamp);
+
+-- Create indexes for forecast_weather
+CREATE INDEX idx_forecast_weather_farm ON forecast_weather (farm_id);
+CREATE INDEX idx_forecast_weather_time ON forecast_weather (forecast_for);
+CREATE INDEX idx_forecast_weather_location ON forecast_weather USING GIST (location);
+CREATE INDEX idx_forecast_source_time ON forecast_weather (source, fetched_at);
+
+-- Add unique constraints
+ALTER TABLE current_weather
+ADD CONSTRAINT current_weather_unique
+UNIQUE (farm_id, source, timestamp);
+
+ALTER TABLE forecast_weather
+ADD CONSTRAINT forecast_weather_unique
+UNIQUE (farm_id, source, forecast_for);
