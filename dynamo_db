@@ -1,0 +1,49 @@
+{
+  "TableName": "WeatherRules",
+  "KeySchema": [
+    {
+      "AttributeName": "farm_id",
+      "KeyType": "HASH"
+    },
+    {
+      "AttributeName": "stakeholder",
+      "KeyType": "RANGE"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "farm_id",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "stakeholder",
+      "AttributeType": "S"
+    }
+  ],
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "StakeholderIndex",
+      "KeySchema": [
+        {
+          "AttributeName": "farm_id",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "stakeholder",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      },
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+      }
+    }
+  ],
+  "ProvisionedThroughput": {
+    "ReadCapacityUnits": 1,
+    "WriteCapacityUnits": 1
+  }
+}
